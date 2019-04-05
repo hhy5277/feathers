@@ -1,13 +1,13 @@
-const assert = require('assert');
-const feathers = require('@feathersjs/feathers');
-const channels = require('../../lib/channels');
-const Channel = require('../../lib/channels/channel/base');
-const CombinedChannel = require('../../lib/channels/channel/combined');
+import assert from 'assert';
+import feathers, { Application } from '@feathersjs/feathers';
+import { channels, keys } from '../../src/channels';
+import { Channel, RealTimeConnection } from '../../src/channels/channel/base';
+import { CombinedChannel } from '../../src/channels/channel/combined';
 
-const { CHANNELS } = channels.keys;
+const { CHANNELS } = keys;
 
 describe('app.channel', () => {
-  let app;
+  let app: Application;
 
   beforeEach(() => {
     app = feathers().configure(channels());
@@ -151,7 +151,7 @@ describe('app.channel', () => {
 
         channel.join(connection).leave(connection);
 
-        assert.ok(app[CHANNELS].testing === undefined);
+        assert.ok((app[CHANNELS] as any).testing === undefined);
 
         assert.strictEqual(channel.listenerCount('something'), 0);
         assert.strictEqual(channel.listenerCount('empty'), 0);
@@ -214,7 +214,7 @@ describe('app.channel', () => {
       const c2 = { id: 2, leave: true };
       const combined = app.channel('test', 'again').join(c1, c2);
 
-      combined.leave(connection => connection.leave);
+      combined.leave((connection: RealTimeConnection) => connection.leave);
 
       assert.strictEqual(app.channel('test').length, 1);
       assert.strictEqual(app.channel('again').length, 1);

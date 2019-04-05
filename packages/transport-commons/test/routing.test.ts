@@ -1,15 +1,15 @@
-const assert = require('assert');
-const feathers = require('@feathersjs/feathers');
-const routing = require('../lib/routing');
+import assert from 'assert';
+import feathers, { Application } from '@feathersjs/feathers';
+import { routing } from '../src/routing';
 
 describe('app.router', () => {
-  let app;
+  let app: Application;
 
   beforeEach(() => {
     app = feathers().configure(routing());
 
     app.use('/my/service', {
-      get (id) {
+      get(id: string|number) {
         return Promise.resolve({ id });
       }
     });
@@ -21,6 +21,7 @@ describe('app.router', () => {
 
   it('has app.lookup and ROUTER symbol', () => {
     assert.strictEqual(typeof app.lookup, 'function');
+    // @ts-ignore
     assert.ok(app[routing.ROUTER]);
   });
 
@@ -32,6 +33,7 @@ describe('app.router', () => {
 
   it('returns null for invalid service path', () => {
     assert.strictEqual(app.lookup(null), null);
+    // @ts-ignore
     assert.strictEqual(app.lookup({}), null);
   });
 
@@ -54,8 +56,8 @@ describe('app.router', () => {
     const path = '/test/:first/my/:second';
 
     app.use(path, {
-      get (id) {
-        return { id };
+      get(id: string|number) {
+        return Promise.resolve({ id });
       }
     });
 

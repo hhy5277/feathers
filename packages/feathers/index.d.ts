@@ -169,10 +169,13 @@ export interface ServiceOverloads<T> {
 
 export interface ServiceAddons<T> extends EventEmitter {
     id?: any;
+    _serviceEvents: string[];
     hooks(hooks: Partial<HooksObject>): this;
 }
 
 export type Service<T> = ServiceOverloads<T> & ServiceAddons<T> & ServiceMethods<T>;
+
+export type ServiceMixin = (service: Service<any>, path: string) => void
 
 export interface Application<ServiceTypes = any> extends EventEmitter {
     get(name: string): any;
@@ -202,4 +205,8 @@ export interface Application<ServiceTypes = any> extends EventEmitter {
     version: string;
 
     services: ServiceTypes;
+
+    mixins: ServiceMixin[];
+
+    methods: string[];
 }
